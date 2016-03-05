@@ -1,5 +1,7 @@
 package tela1;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
@@ -15,6 +17,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseAdapter;
 
 public class Principal extends Shell {
 	private CLabel lblImagem1;
@@ -31,6 +34,7 @@ public class Principal extends Shell {
 	private CLabel lblImagem3;
 	private Label lblCor;
 	private Label lblPos;
+	ArrayList<String> listaCordenadas = new ArrayList<String>(); 
 	
 
 	/**
@@ -125,6 +129,13 @@ public class Principal extends Shell {
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 		lblImagem1 = new CLabel(scrolledComposite, SWT.BORDER);
+		lblImagem1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				listaCordenadas.add(lblPos.getText());
+				System.out.println("add -> "+lblPos.getText());
+			}
+		});
 		scrolledComposite.setContent(lblImagem1);
 		//scrolledComposite.setMinSize(lblImagem1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		lblImagem1.addMouseMoveListener(new MouseMoveListener() {
@@ -162,7 +173,6 @@ public class Principal extends Shell {
 		
 		lblPos = new Label(composite, SWT.NONE);
 		lblPos.setFont(SWTResourceManager.getFont("Segoe UI", 11, SWT.BOLD));
-		lblPos.setText("500,500");
 		lblPos.setBounds(655, 165, 75, 20);
 		createContents();
 	}
