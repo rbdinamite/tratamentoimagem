@@ -100,6 +100,7 @@ public class Principal extends Shell {
 		btnImagem2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				Funcoes.abreImagem(2,lblImagem2);
 			}
 		});
 		btnImagem2.setText("Imagem 2");
@@ -132,17 +133,15 @@ public class Principal extends Shell {
 		lblImagem1.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent arg0) {
-				listaCordenadas.add(lblPos.getText());
-				System.out.println("add -> "+lblPos.getText());
+				String info = lblPos.getText()+","+lblR.getText().substring(3)+","+lblR.getText().substring(3)+","+lblR.getText().substring(3);
+				listaCordenadas.add(info);
+				System.out.println("add -> "+info);
 			}
 		});
 		scrolledComposite.setContent(lblImagem1);
-		//scrolledComposite.setMinSize(lblImagem1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		lblImagem1.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent arg0) {
-				int x = scrolledComposite.toControl(display.getCursorLocation()).x;
-				int y = scrolledComposite.toControl(display.getCursorLocation()).y;
-				Funcoes.capturaPixel(x, y, lblPos, lblCor, lblR, lblG, lblB);
+				Funcoes.capturaPixel(arg0.x, arg0.y, lblPos, lblCor, lblR, lblG, lblB,1);
 			}
 		});
 		
@@ -162,6 +161,21 @@ public class Principal extends Shell {
 		scrolledComposite_2.setExpandVertical(true);
 		scrolledComposite_2.setExpandHorizontal(true);
 		scrolledComposite_2.setBounds(655, 191, 287, 241);
+		
+		lblImagem2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent arg0) {
+				String info = lblPos.getText()+","+lblR.getText().substring(3)+","+lblR.getText().substring(3)+","+lblR.getText().substring(3);
+				listaCordenadas.add(info);
+				System.out.println("add -> "+info);
+			}
+		});
+		
+		lblImagem2.addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent arg0) {
+				Funcoes.capturaPixel(arg0.x, arg0.y, lblPos, lblCor, lblR, lblG, lblB,2);
+			}
+		});
 		
 		lblImagem3 = new CLabel(scrolledComposite_2, SWT.BORDER);
 		lblImagem3.setText("");
