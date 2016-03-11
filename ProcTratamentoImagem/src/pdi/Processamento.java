@@ -48,6 +48,7 @@ public class Processamento {
 		for (int i = 0; i < vizinhos.length; i++) {
 			for (int j = 0; i < vizinhos.length; i++) {
 				raster.getPixel(vizinhos[i][j].getX(), vizinhos[i][j].getY(), pixels);
+				System.out.println(pixels[0]+" - "+pixels[1]+" - "+pixels[2]);
 				vizinhos[i][j].setR(pixels[0]);
 				vizinhos[i][j].setG(pixels[1]);
 				vizinhos[i][j].setB(pixels[2]);
@@ -62,8 +63,8 @@ public class Processamento {
 	public int retornaMediana(Pixel[][] vizinhos, int indice) {
 		int[] valores = new int[9];
 		int cont = 0;
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < vizinhos.length; i++) {
+			for (int j = 0; j < vizinhos.length; j++) {
 				switch (indice) {
 				case 0:
 					valores[cont] = vizinhos[i][j].getR();
@@ -81,6 +82,7 @@ public class Processamento {
 			}
 		}
 		valores = ordenaVetor(valores);
+		//System.out.println("Valores -> "+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]+"-"+valores[4]);
 		return valores[4];
 	}
 	
