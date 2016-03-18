@@ -7,6 +7,7 @@ import utils.Pixel;
 
 public class Processamento {
 
+	// FUNÇÕES PARA CÁLCULO DE MÉDIA E MEDIANA
 	public BufferedImage filtroMediana(int tipoVizinho, BufferedImage image, boolean calculaMedia) {
 		WritableRaster raster = image.getRaster();
 		BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -159,4 +160,91 @@ public class Processamento {
 		vizinhos[2][2] = null;
 		return vizinhos;
 	}
+	
+	// FUNÇÕES PARA CÁLCULO DE ESCALA DE CINZA
+	public BufferedImage filtroEscalaCinza(int tipo, BufferedImage image, int propR, int propG,int propB) {
+		WritableRaster raster = image.getRaster();
+		BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		int pixels[] = new int[4];
+		for (int i = 1; i < image.getWidth()-1; i++) {
+			for (int j = 1; j <image.getHeight()-1; j++) {
+				raster.getPixel(i,j,pixels);
+				int escalaCinza = calculaEscalaCinza(tipo, pixels, propR, propG, propB);
+				pixels[0] = escalaCinza;
+				pixels[1] = escalaCinza;
+				pixels[2] = escalaCinza;
+				raster.setPixel(i,j,pixels);
+			}
+		}
+		try {
+			newImg.setData(raster);
+		} catch (Exception e) {
+			System.out.println("Erro ao inserir escala de cinza na imagem");
+			e.printStackTrace();
+		}
+		return newImg;
+	}
+	
+	public int calculaEscalaCinza(int tipo,int[] pixels, int propR, int propG,int propB) {
+		int resultado = 0;
+		switch (tipo) {
+		// CALCULA ESCALA SIMPLES
+		case 1:
+			resultado = (int) ((pixels[0]+pixels[1]+pixels[2])/3);
+			break;
+		//CALCULA ESCALA PONDERADA
+		case 2:
+			resultado = (int) (((pixels[0]*propR)+(pixels[1]*propG)+(pixels[2]*propB))/100);
+			break;
+		default:
+			break;
+		}
+		return resultado;
+	}
+	
+	// FUNÇÕES PARA O CÁLCULO DA LIMIARIZAÇÃO
+	public BufferedImage filtroLimiarizacao(BufferedImage image, int limiar) {
+		WritableRaster raster = image.getRaster();
+		BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		int pixels[] = new int[4];
+		for (int i = 1; i < image.getWidth()-1; i++) {
+			for (int j = 1; j <image.getHeight()-1; j++) {
+				raster.getPixel(i,j,pixels);
+				pixels[0] = (pixels[0] <= limiar)?0:255;
+				pixels[1] = (pixels[1] <= limiar)?0:255;
+				pixels[2] = (pixels[2] <= limiar)?0:255;
+				raster.setPixel(i,j,pixels);
+			}
+		}
+		try {
+			newImg.setData(raster);
+		} catch (Exception e) {
+			System.out.println("Erro ao inserir escala de cinza na imagem");
+			e.printStackTrace();
+		}
+		return newImg;
+	}
+	
+	// FUNÇÕES PARA O CÁLCULO DA NEGATIVA
+		public BufferedImage filtroNegativa(BufferedImage image) {
+			WritableRaster raster = image.getRaster();
+			BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+			int pixels[] = new int[4];
+			for (int i = 1; i < image.getWidth()-1; i++) {
+				for (int j = 1; j <image.getHeight()-1; j++) {
+					raster.getPixel(i,j,pixels);
+					pixels[0] = 255-pixels[0];
+					pixels[1] = 255-pixels[1];
+					pixels[2] = 255-pixels[2];
+					raster.setPixel(i,j,pixels);
+				}
+			}
+			try {
+				newImg.setData(raster);
+			} catch (Exception e) {
+				System.out.println("Erro ao inserir escala de cinza na imagem");
+				e.printStackTrace();
+			}
+			return newImg;
+		}
 }
