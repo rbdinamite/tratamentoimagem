@@ -36,8 +36,8 @@ public class Funcoes {
 						image1.getImageData().height);
 			}
 		} else if (idImagem == 2) {
-			if (filePath1 != null) {
-				filePath2 = fileDialog.open();	
+			filePath2 = fileDialog.open();	
+			if (filePath2 != null) {
 				image2 = new Image(null, filePath2);
 				label.setBackground(image2);
 				label.setBounds(label.getBounds().x, label.getBounds().y, image2.getImageData().width,

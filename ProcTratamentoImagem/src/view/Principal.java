@@ -11,30 +11,32 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import pdi.Processamento;
 import utils.Funcoes;
 
-import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.widgets.Combo;
-
 public class Principal extends Shell {
 	private CLabel lblImagem1;
 	private Button btnImagem1;
 	private Button btnImagem2;
-	private Label lblNewLabel;
 	private Label lblR;
 	private Label lblB;
 	private Label lblG;
@@ -52,6 +54,16 @@ public class Principal extends Shell {
 	private Button btnMedia2;
 	private Composite compositeFiltro;
 	private Combo comboTipoConsulta;
+	private Text txtPropR;
+	private Text txtPropG;
+	private Text txtPropB;
+	private Label lblErro;
+	private CTabItem acaoLimiarizacao;
+	private Composite composite_2;
+	private CTabItem acaoNegativa;
+	private Composite composite_3;
+	private Button btnNegativaImagem1;
+	private Button btnNegativaImagem2;
 	
 
 	/**
@@ -198,16 +210,318 @@ public class Principal extends Shell {
 		lblTipoDeConsulta.setBounds(432, 10, 134, 26);
 		lblTipoDeConsulta.setText("Tipo de consulta:");
 		
-		CTabItem tabItem_2 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem_2.setText("New Item");
+		CTabItem acaoEscalaCinza = new CTabItem(tabFolder, SWT.NONE);
+		acaoEscalaCinza.setText("Escala de Cinza");
 		
-		lblNewLabel = new Label(tabFolder, SWT.NONE);
-		lblNewLabel.setFont(SWTResourceManager.getFont("Segoe UI", 16, SWT.BOLD));
-		tabItem_2.setControl(lblNewLabel);
-		lblNewLabel.setText("PENDENTE");
+		Composite composite_1 = new Composite(tabFolder, SWT.NONE);
+		acaoEscalaCinza.setControl(composite_1);
 		
-		CTabItem tabItem_1 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem_1.setText("New Item");
+		Button btnSimplesImagem1 = new Button(composite_1, SWT.NONE);
+		btnSimplesImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroEscalaCinza(1, ImageIO.read(new File(funcoes.getFilePath1())),0,0,0);
+						ImageIO.write(escalaCinza, "jpg", new File("images/_escalaCinzaSimples.jpg"));
+						Image Image3 = new Image(null, "images/_escalaCinzaSimples.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnSimplesImagem1.setText("Simples - Imagem 1");
+		btnSimplesImagem1.setBounds(10, 10, 168, 32);
+		
+		Button btnSimplesImagem2 = new Button(composite_1, SWT.NONE);
+		btnSimplesImagem2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage escalaCinza = proc.filtroEscalaCinza(1, ImageIO.read(new File(funcoes.getFilePath2())),0,0,0);
+						ImageIO.write(escalaCinza, "jpg", new File("images/_escalaCinzaSimples.jpg"));
+						Image Image3 = new Image(null, "images/_escalaCinzaSimples.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnSimplesImagem2.setText("Simples - Imagem 2");
+		btnSimplesImagem2.setBounds(10, 55, 168, 32);
+		
+		Button btnPonderadaImagem1 = new Button(composite_1, SWT.NONE);
+		btnPonderadaImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (Integer.parseInt(txtPropR.getText())+
+								Integer.parseInt(txtPropG.getText())+Integer.parseInt(txtPropB.getText()) != 100) {
+					lblErro.setText("ERRO: A SOMA DEVE SER IGUAL A 100!");
+				} else if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroEscalaCinza(2, ImageIO.read(new File(funcoes.getFilePath1())),Integer.parseInt(txtPropR.getText()),
+								Integer.parseInt(txtPropG.getText()),Integer.parseInt(txtPropB.getText()));
+						ImageIO.write(escalaCinza, "jpg", new File("images/_escalaCinzaPonderada.jpg"));
+						Image Image3 = new Image(null, "images/_escalaCinzaPonderada.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnPonderadaImagem1.setText("Ponderada - Imagem 1");
+		btnPonderadaImagem1.setBounds(212, 10, 168, 32);
+		
+		Button btnPonderadaImagem2 = new Button(composite_1, SWT.NONE);
+		btnPonderadaImagem2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (Integer.parseInt(txtPropR.getText())+
+						Integer.parseInt(txtPropG.getText())+Integer.parseInt(txtPropB.getText()) != 100) {
+			lblErro.setText("ERRO: A SOMA DEVE SER IGUAL A 100!");
+		} else if (funcoes.getFilePath2() != null) {
+			Processamento proc = new Processamento();
+			try {
+				System.out.println("Arquivo -> "+funcoes.getFilePath2());
+				BufferedImage escalaCinza = proc.filtroEscalaCinza(2, ImageIO.read(new File(funcoes.getFilePath2())),Integer.parseInt(txtPropR.getText()),
+						Integer.parseInt(txtPropG.getText()),Integer.parseInt(txtPropB.getText()));
+				ImageIO.write(escalaCinza, "jpg", new File("images/_escalaCinzaPonderada.jpg"));
+				Image Image3 = new Image(null, "images/_escalaCinzaPonderada.jpg");
+				funcoes.setImage3(Image3);
+				funcoes.abreImagem(3, lblImagem3);
+			} catch (IOException e) {
+				System.out.println("Erro iniciar função de escala de cinza");
+				e.printStackTrace();
+			}
+		}
+			}
+		});
+		btnPonderadaImagem2.setText("Ponderada - Imagem 2");
+		btnPonderadaImagem2.setBounds(212, 55, 168, 32);
+		
+		Label lblProporcao = new Label(composite_1, SWT.NONE);
+		lblProporcao.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblProporcao.setBounds(435, 10, 142, 23);
+		lblProporcao.setText("Propor\u00E7\u00E3o (Ponderada)");
+		
+		txtPropR = new Text(composite_1, SWT.BORDER);
+		txtPropR.setText("40");
+		txtPropR.setBounds(445, 39, 32, 23);
+		
+		txtPropG = new Text(composite_1, SWT.BORDER);
+		txtPropG.setText("30");
+		txtPropG.setBounds(496, 39, 32, 23);
+		
+		txtPropB = new Text(composite_1, SWT.BORDER);
+		txtPropB.setText("30");
+		txtPropB.setBounds(545, 39, 32, 23);
+		
+		Label lblr = new Label(composite_1, SWT.NONE);
+		lblr.setBounds(455, 64, 25, 23);
+		lblr.setText("%R");
+		
+		Label lblg = new Label(composite_1, SWT.NONE);
+		lblg.setText("%G");
+		lblg.setBounds(506, 64, 25, 23);
+		
+		Label lblb = new Label(composite_1, SWT.NONE);
+		lblb.setText("%B");
+		lblb.setBounds(552, 64, 25, 23);
+		
+		lblErro = new Label(composite_1, SWT.NONE);
+		lblErro.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+		lblErro.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblErro.setBounds(435, 86, 347, 23);
+		
+		acaoLimiarizacao = new CTabItem(tabFolder, SWT.NONE);
+		acaoLimiarizacao.setText("Limiariza\u00E7\u00E3o");
+		
+		composite_2 = new Composite(tabFolder, SWT.NONE);
+		acaoLimiarizacao.setControl(composite_2);
+		
+		Slider sliderImagem1 = new Slider(composite_2, SWT.NONE);
+		sliderImagem1.setMaximum(265);
+		sliderImagem1.setSelection(100);
+		sliderImagem1.addDragDetectListener(new DragDetectListener() {
+			public void dragDetected(DragDetectEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroLimiarizacao(ImageIO.read(new File(funcoes.getFilePath1())),sliderImagem1.getSelection());
+						System.out.println(sliderImagem1.getSelection());
+						ImageIO.write(escalaCinza, "jpg", new File("images/_limiaziracao.jpg"));
+						Image Image3 = new Image(null, "images/_limiaziracao.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		sliderImagem1.setBounds(47, 66, 170, 17);
+		
+		Slider sliderImagem2 = new Slider(composite_2, SWT.NONE);
+		sliderImagem2.setMaximum(255);
+		sliderImagem2.setSelection(100);
+		sliderImagem2.addDragDetectListener(new DragDetectListener() {
+			public void dragDetected(DragDetectEvent arg0) {
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage escalaCinza = proc.filtroLimiarizacao(ImageIO.read(new File(funcoes.getFilePath2())),sliderImagem2.getSelection());
+						ImageIO.write(escalaCinza, "jpg", new File("images/_limiaziracao.jpg"));
+						Image Image3 = new Image(null, "images/_limiaziracao.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+
+		sliderImagem2.setBounds(329, 66, 170, 17);
+		
+		Label lblImagem = new Label(composite_2, SWT.NONE);
+		lblImagem.setAlignment(SWT.CENTER);
+		lblImagem.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblImagem.setBounds(47, 33, 166, 27);
+		lblImagem.setText("Imagem 1");
+		
+		Label lblImagem_1 = new Label(composite_2, SWT.NONE);
+		lblImagem_1.setText("Imagem 2");
+		lblImagem_1.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		lblImagem_1.setAlignment(SWT.CENTER);
+		lblImagem_1.setBounds(333, 33, 166, 27);
+		
+		Label label = new Label(composite_2, SWT.NONE);
+		label.setBounds(47, 89, 18, 15);
+		label.setText("0");
+		
+		Label label_1 = new Label(composite_2, SWT.NONE);
+		label_1.setText("0");
+		label_1.setBounds(329, 89, 18, 15);
+		
+		Label label_2 = new Label(composite_2, SWT.NONE);
+		label_2.setText("255");
+		label_2.setBounds(206, 89, 24, 15);
+		
+		Label label_3 = new Label(composite_2, SWT.NONE);
+		label_3.setText("255");
+		label_3.setBounds(491, 89, 24, 15);
+		
+		acaoNegativa = new CTabItem(tabFolder, SWT.NONE);
+		acaoNegativa.setText("Negativa");
+		
+		composite_3 = new Composite(tabFolder, SWT.NONE);
+		acaoNegativa.setControl(composite_3);
+		
+		btnNegativaImagem1 = new Button(composite_3, SWT.NONE);
+		btnNegativaImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroNegativa(ImageIO.read(new File(funcoes.getFilePath1())));
+						ImageIO.write(escalaCinza, "jpg", new File("images/_negativa.jpg"));
+						Image Image3 = new Image(null, "images/_negativa.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnNegativaImagem1.setText("Negativa - Imagem 1");
+		btnNegativaImagem1.setBounds(10, 34, 168, 32);
+		
+		btnNegativaImagem2 = new Button(composite_3, SWT.NONE);
+		btnNegativaImagem2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage escalaCinza = proc.filtroNegativa(ImageIO.read(new File(funcoes.getFilePath2())));
+						ImageIO.write(escalaCinza, "jpg", new File("images/_negativa.jpg"));
+						Image Image3 = new Image(null, "images/_negativa.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnNegativaImagem2.setText("Negativa - Imagem 2");
+		btnNegativaImagem2.setBounds(210, 34, 168, 32);
+		
+		CTabItem histograma = new CTabItem(tabFolder, SWT.NONE);
+		histograma.setText("Histograma");
+		
+		Composite composite_4 = new Composite(tabFolder, SWT.NONE);
+		histograma.setControl(composite_4);
+		
+		Button btnHistograma1 = new Button(composite_4, SWT.NONE);
+		btnHistograma1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Processamento proc = new Processamento();
+				try {
+					proc.filtroHistograma(ImageIO.read(new File(funcoes.getFilePath1())));
+				} catch (Exception e) {
+					System.out.println("Erro ao criar histograma");
+					e.printStackTrace();
+				}
+			}
+		});
+		btnHistograma1.setText("Histograma - Imagem 1");
+		btnHistograma1.setBounds(10, 10, 168, 32);
+		
+		Button btnHistograma2 = new Button(composite_4, SWT.NONE);
+		btnHistograma2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Processamento proc = new Processamento();
+				try {
+					proc.filtroHistograma(ImageIO.read(new File(funcoes.getFilePath2())));
+				} catch (Exception e) {
+					System.out.println("Erro ao criar histograma");
+					e.printStackTrace();
+				}
+			}
+		});
+		btnHistograma2.setText("Histograma - Imagem 2");
+		btnHistograma2.setBounds(10, 61, 168, 32);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {
