@@ -64,6 +64,10 @@ public class Principal extends Shell {
 	private Composite composite_3;
 	private Button btnNegativaImagem1;
 	private Button btnNegativaImagem2;
+	private Button btnHistograma1;
+	private Button btnHistograma2;
+	private Button btnEqualizarImagem;
+	private Button btnEqualizarImagem_1;
 	
 
 	/**
@@ -93,6 +97,7 @@ public class Principal extends Shell {
 	 */
 	public Principal(Display display) {
 		super(display, SWT.SHELL_TRIM);
+		setImage(SWTResourceManager.getImage("images/icon.jpg"));
 		
 		Composite composite = new Composite(this, SWT.NONE);
 		composite.setBounds(0, 0, 952, 442);
@@ -491,7 +496,7 @@ public class Principal extends Shell {
 		Composite composite_4 = new Composite(tabFolder, SWT.NONE);
 		histograma.setControl(composite_4);
 		
-		Button btnHistograma1 = new Button(composite_4, SWT.NONE);
+		btnHistograma1 = new Button(composite_4, SWT.NONE);
 		btnHistograma1.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -507,7 +512,7 @@ public class Principal extends Shell {
 		btnHistograma1.setText("Histograma - Imagem 1");
 		btnHistograma1.setBounds(10, 10, 168, 32);
 		
-		Button btnHistograma2 = new Button(composite_4, SWT.NONE);
+		btnHistograma2 = new Button(composite_4, SWT.NONE);
 		btnHistograma2.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -522,6 +527,58 @@ public class Principal extends Shell {
 		});
 		btnHistograma2.setText("Histograma - Imagem 2");
 		btnHistograma2.setBounds(10, 61, 168, 32);
+		
+		CTabItem filtroEqualizacao = new CTabItem(tabFolder, SWT.NONE);
+		filtroEqualizacao.setText("Equalizacao");
+		
+		Composite composite_5 = new Composite(tabFolder, SWT.NONE);
+		filtroEqualizacao.setControl(composite_5);
+		
+		btnEqualizarImagem = new Button(composite_5, SWT.NONE);
+		btnEqualizarImagem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage equalizacao = proc.filtroEqualizacao(ImageIO.read(new File(funcoes.getFilePath1())));
+						ImageIO.write(equalizacao, "jpg", new File("images/_equalizacao1.jpg"));
+						Image Image3 = new Image(null, "images/_equalizacao1.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de equalizacao");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnEqualizarImagem.setText("Equalizar - Imagem 1");
+		btnEqualizarImagem.setBounds(10, 10, 168, 32);
+		
+		btnEqualizarImagem_1 = new Button(composite_5, SWT.NONE);
+		btnEqualizarImagem_1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage equalizacao = proc.filtroEqualizacao(ImageIO.read(new File(funcoes.getFilePath2())));
+						ImageIO.write(equalizacao, "jpg", new File("images/_equalizacao2.jpg"));
+						Image Image3 = new Image(null, "images/_equalizacao2.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de equalizacao");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnEqualizarImagem_1.setText("Equalizar - Imagem 2");
+		btnEqualizarImagem_1.setBounds(10, 58, 168, 32);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {
