@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -68,6 +69,20 @@ public class Principal extends Shell {
 	private Button btnHistograma2;
 	private Button btnEqualizarImagem;
 	private Button btnEqualizarImagem_1;
+	private Button btnAdicao;
+	private Button btnSubtracao;
+	private Spinner txImg1;
+	private Spinner txImg2;
+	private CTabItem transparencia;
+	private Composite composite_7;
+	private Label label_4;
+	private Slider transpImagem1;
+	private Label label_5;
+	private Slider transpImagem2;
+	private Label label_6;
+	private Label label_7;
+	private Label label_8;
+	private Label label_9;
 	
 
 	/**
@@ -579,6 +594,155 @@ public class Principal extends Shell {
 		});
 		btnEqualizarImagem_1.setText("Equalizar - Imagem 2");
 		btnEqualizarImagem_1.setBounds(10, 58, 168, 32);
+		
+		CTabItem adicaoSubtracao = new CTabItem(tabFolder, SWT.NONE);
+		adicaoSubtracao.setText("Adi\u00E7\u00E3o e Subtra\u00E7\u00E3o");
+		
+		Composite composite_6 = new Composite(tabFolder, SWT.NONE);
+		adicaoSubtracao.setControl(composite_6);
+		
+		Label lblTaxaImg = new Label(composite_6, SWT.NONE);
+		lblTaxaImg.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblTaxaImg.setBounds(10, 21, 81, 27);
+		lblTaxaImg.setText("Taxa IMG 1:");
+		
+		Label lblTaxaImg_1 = new Label(composite_6, SWT.NONE);
+		lblTaxaImg_1.setText("Taxa IMG 2:");
+		lblTaxaImg_1.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblTaxaImg_1.setBounds(10, 65, 81, 27);
+		
+		txImg1 = new Spinner(composite_6, SWT.BORDER);
+		txImg1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				txImg2.setSelection(100-txImg1.getSelection());
+			}
+		});
+		txImg1.setSelection(50);
+		txImg1.setBounds(93, 21, 47, 22);
+		
+		txImg2 = new Spinner(composite_6, SWT.BORDER);
+		txImg2.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				txImg1.setSelection(100-txImg2.getSelection());
+			}
+		});
+		txImg2.setSelection(50);
+		txImg2.setBounds(93, 64, 47, 22);
+		
+		btnAdicao = new Button(composite_6, SWT.NONE);
+		btnAdicao.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null && funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						BufferedImage equalizacao = proc.filtroAdicaoSubtracao(ImageIO.read(new File(funcoes.getFilePath1())), ImageIO.read(new File(funcoes.getFilePath2())), 
+								true, txImg1.getSelection(), txImg2.getSelection());
+						ImageIO.write(equalizacao, "jpg", new File("images/_adicao.jpg"));
+						Image Image3 = new Image(null, "images/_adicao.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de adicao");
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("ERRO: SELECIONE DUAS IMAGENS!");
+				}
+			}
+		});
+		btnAdicao.setBounds(204, 21, 120, 34);
+		btnAdicao.setText("Adi\u00E7\u00E3o");
+		
+		btnSubtracao = new Button(composite_6, SWT.NONE);
+		btnSubtracao.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null && funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						BufferedImage equalizacao = proc.filtroAdicaoSubtracao(ImageIO.read(new File(funcoes.getFilePath1())), ImageIO.read(new File(funcoes.getFilePath2())), 
+								false, txImg1.getSelection(), txImg2.getSelection());
+						ImageIO.write(equalizacao, "jpg", new File("images/_subtracao.jpg"));
+						Image Image3 = new Image(null, "images/_subtracao.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de subtracao");
+						e.printStackTrace();
+					}
+				} else {
+					System.out.println("ERRO: SELECIONE DUAS IMAGENS!");
+				}
+			}
+		});
+		btnSubtracao.setText("Subtra\u00E7\u00E3o");
+		btnSubtracao.setBounds(204, 58, 120, 34);
+		
+		transparencia = new CTabItem(tabFolder, SWT.NONE);
+		transparencia.setText("Transpar\u00EAncia");
+		
+		composite_7 = new Composite(tabFolder, SWT.NONE);
+		transparencia.setControl(composite_7);
+		
+		label_4 = new Label(composite_7, SWT.NONE);
+		label_4.setText("Imagem 1");
+		label_4.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		label_4.setAlignment(SWT.CENTER);
+		label_4.setBounds(46, 33, 166, 27);
+		
+		transpImagem1 = new Slider(composite_7, SWT.NONE);
+		transpImagem1.addDragDetectListener(new DragDetectListener() {
+			public void dragDetected(DragDetectEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroTransparencia(ImageIO.read(new File(funcoes.getFilePath1())),transpImagem1.getSelection());
+						System.out.println(transpImagem1.getSelection());
+						ImageIO.write(escalaCinza, "jpg", new File("images/_transparencia.jpg"));
+						Image Image3 = new Image(null, "images/_transparencia.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		transpImagem1.setMaximum(110);
+		transpImagem1.setSelection(50);
+		transpImagem1.setBounds(42, 66, 170, 17);
+		
+		label_5 = new Label(composite_7, SWT.NONE);
+		label_5.setText("Imagem 2");
+		label_5.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+		label_5.setAlignment(SWT.CENTER);
+		label_5.setBounds(278, 33, 166, 27);
+		
+		transpImagem2 = new Slider(composite_7, SWT.NONE);
+		transpImagem2.setMaximum(110);
+		transpImagem2.setSelection(50);
+		transpImagem2.setBounds(274, 66, 170, 17);
+		
+		label_6 = new Label(composite_7, SWT.NONE);
+		label_6.setText("0");
+		label_6.setBounds(39, 89, 18, 15);
+		
+		label_7 = new Label(composite_7, SWT.NONE);
+		label_7.setText("100");
+		label_7.setBounds(204, 89, 18, 15);
+		
+		label_8 = new Label(composite_7, SWT.NONE);
+		label_8.setText("0");
+		label_8.setBounds(271, 89, 18, 15);
+		
+		label_9 = new Label(composite_7, SWT.NONE);
+		label_9.setText("100");
+		label_9.setBounds(435, 89, 18, 15);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {

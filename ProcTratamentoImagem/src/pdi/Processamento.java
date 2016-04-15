@@ -401,4 +401,96 @@ public class Processamento {
 			}
 			return newImg;				
 		}
+		
+		// FUNÇÕES PARA O CÁLCULO DE ADICAO E SUBTRAÇÃO
+		public BufferedImage filtroAdicaoSubtracao(BufferedImage image1, BufferedImage image2, boolean soma,int txImg1, int txImg2) {
+			WritableRaster raster1 = image1.getRaster();
+			WritableRaster raster2 = image2.getRaster();
+			int Xmaior = Math.max(image1.getWidth(),image2.getWidth());
+			int Ymaior = Math.max(image1.getHeight(), image2.getHeight());
+			BufferedImage newImg = new BufferedImage(Xmaior, Ymaior, BufferedImage.TYPE_INT_RGB);
+			WritableRaster raster3 = newImg.getRaster();
+			int pixels1[] = new int[4];
+			int pixels2[] = new int[4];
+			int c1 = 0,c2 = 0;
+					for (int i = 1; i < Xmaior-1; i++) {
+						for (int j = 1; j < Ymaior-1; j++) {
+							// VERIFICA INDICE NA IMAGE 1
+							if (i < image1.getWidth() && j < image1.getHeight()) {
+								raster1.getPixel(i,j,pixels1);
+							} else {
+								pixels1[0] = 0;
+								pixels1[1] = 0;
+								pixels1[0] = 0;
+							}
+							// VERIFICA INDICE NA IMAGEM 2
+							if (i < image2.getWidth() && j < image2.getHeight()) {
+								raster2.getPixel(i,j,pixels2);
+							} else {
+								pixels1[0] = 0;
+								pixels1[1] = 0;
+								pixels1[0] = 0;
+							}
+							
+							// CALCULA R
+							c1 = (int) (pixels1[0]*((double) txImg1/100));
+							c2 = (int) (pixels2[0]*((double) txImg2/100));
+							pixels1[0] = (soma) ? c1+c2 : pixels1[0]-pixels2[0];
+							pixels1[0] = (pixels1[0] < 0) ? (pixels1[0]*(-1)) : pixels1[0];
+							// CALCULA G
+							c1 = (int) (pixels1[1]*((double) txImg1/100));
+							c2 = (int) (pixels2[1]*((double) txImg2/100));
+							pixels1[1] = (soma) ? c1+c2 : pixels1[1]-pixels2[1];
+							pixels1[1] = (pixels1[1] < 0) ? (pixels1[1]*(-1)) : pixels1[1];
+							// CALCULA B
+							c1 = (int) (pixels1[2]*((double) txImg1/100));
+							c2 = (int) (pixels2[2]*((double) txImg2/100));
+							pixels1[2] = (soma) ? c1+c2 : pixels1[2]-pixels2[2];
+							pixels1[2] = (pixels1[2] < 0) ? (pixels1[2]*(-1)) : pixels1[2];
+							
+							raster3.setPixel(i,j,pixels1);
+						}
+					}
+					try {
+						newImg.setData(raster3);
+					} catch (Exception e) {
+						System.out.println("Erro ao inserir escala de cinza na imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
+		
+				// FUNÇÕES PARA O CÁLCULO DE TRANSPARENCIA
+				public BufferedImage filtroTransparencia(BufferedImage image, int txImg) {
+					WritableRaster raster = image.getRaster();
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getWidth(), BufferedImage.TYPE_INT_RGB);
+					int pixels[] = new int[4];
+					int c1 = 0, c2 = 0;
+					int taxa = 100-txImg;
+					for (int i = 1; i < image.getWidth()-1; i++) {
+						for (int j = 1; j < image.getWidth()-1; j++) {
+							raster.getPixel(i,j,pixels);
+							// CALCULA R
+							c1 = (int) (pixels[0]*((double) txImg/100));
+							c2 = (int) (255*((double) taxa/100));
+							pixels[0] = c1+c2;
+							// CALCULA G
+							c1 = (int) (pixels[1]*((double) txImg/100));
+							c2 = (int) (255*((double) taxa/100));
+							pixels[1] = c1+c2;
+							// CALCULA B
+							c1 = (int) (pixels[2]*((double) txImg /100));
+							c2 = (int) (255*((double) taxa/100));
+							pixels[2] = c1+c2;
+							raster.setPixel(i,j,pixels);
+						}
+					}
+					try {
+						newImg.setData(raster);
+					} catch (Exception e) {
+						System.out.println("Erro ao inserir escala de cinza na imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
 }
