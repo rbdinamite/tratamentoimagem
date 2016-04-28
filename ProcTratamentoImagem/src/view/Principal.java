@@ -83,6 +83,9 @@ public class Principal extends Shell {
 	private Label label_7;
 	private Label label_8;
 	private Label label_9;
+	int x1=0,x2=0,y1=0,y2=0; // INDICES UTILIZADOS NO DESENHO DE FORMAS
+	private Button btnSimplesImagem1Desenho;
+	private Button btnSimplesImagem2_Desenho;
 	
 
 	/**
@@ -369,6 +372,33 @@ public class Principal extends Shell {
 		lblErro.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
 		lblErro.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
 		lblErro.setBounds(435, 86, 347, 23);
+		
+		btnSimplesImagem1Desenho = new Button(composite_1, SWT.NONE);
+		btnSimplesImagem1Desenho.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null && x1 > 0 && y1 > 0 && x2 > 0 && y2 > 0) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage escalaCinza = proc.filtroEscalaCinzaComDesenho(ImageIO.read(new File(funcoes.getFilePath1())),x1,x2,y1,y2);
+						ImageIO.write(escalaCinza, "jpg", new File("images/_escalaCinzaSimplesComDesenho.jpg"));
+						Image Image3 = new Image(null, "images/_escalaCinzaSimplesComDesenho.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza com desenho");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnSimplesImagem1Desenho.setText("Simples - Imagem 1 (Com desenho)");
+		btnSimplesImagem1Desenho.setBounds(614, 10, 202, 32);
+		
+		btnSimplesImagem2_Desenho = new Button(composite_1, SWT.NONE);
+		btnSimplesImagem2_Desenho.setText("Simples - Imagem 2 (Com desenho)");
+		btnSimplesImagem2_Desenho.setBounds(614, 55, 202, 32);
 		
 		acaoLimiarizacao = new CTabItem(tabFolder, SWT.NONE);
 		acaoLimiarizacao.setText("Limiariza\u00E7\u00E3o");
@@ -724,6 +754,25 @@ public class Principal extends Shell {
 		label_5.setBounds(278, 33, 166, 27);
 		
 		transpImagem2 = new Slider(composite_7, SWT.NONE);
+		transpImagem2.addDragDetectListener(new DragDetectListener() {
+			public void dragDetected(DragDetectEvent arg0) {
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage escalaCinza = proc.filtroTransparencia(ImageIO.read(new File(funcoes.getFilePath2())),transpImagem2.getSelection());
+						System.out.println(transpImagem2.getSelection());
+						ImageIO.write(escalaCinza, "jpg", new File("images/_transparencia.jpg"));
+						Image Image3 = new Image(null, "images/_transparencia.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de escala de cinza");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 		transpImagem2.setMaximum(110);
 		transpImagem2.setSelection(50);
 		transpImagem2.setBounds(274, 66, 170, 17);
@@ -783,44 +832,88 @@ public class Principal extends Shell {
 		lblB.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.BOLD));
 		lblB.setBounds(517, 160, 62, 25);
 		
+		
 		scrolledComposite = new ScrolledComposite(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolledComposite.setBounds(10, 191, 287, 241);
 		lblImagem1 = new CLabel(scrolledComposite, SWT.NONE);
 		scrolledComposite.setContent(lblImagem1);
 		scrolledComposite.setMinSize(lblImagem1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		lblImagem1.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				String texto = lblPos.getText()+","+lblR.getText().substring(3)+","+lblG.getText().substring(3)+","+lblB.getText().substring(3);
-				listaCordenadas.add(texto);
-				System.out.println("add -> "+texto);
-			}
-		});
 		scrolledComposite.setMinSize(lblImagem1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		lblImagem1.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent arg0) {
 				funcoes.capturaPixel(1,arg0.x, arg0.y, lblPos, lblCor, lblR, lblG, lblB);
 			}
 		});
+		lblImagem1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				x1=e.x; y1=e.y;
+			}
+			@Override
+			public void mouseUp(MouseEvent e) {
+				// USO NO INFORMATIVO DE RGB (ADICIONANDO AO ARRAY)
+				String texto = lblPos.getText()+","+lblR.getText().substring(3)+","+lblG.getText().substring(3)+","+lblB.getText().substring(3);
+				listaCordenadas.add(texto);
+				System.out.println("add -> "+texto);
+				// ------------------------------------------------
+				x2=e.x; y2=e.y;
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage desenhoForma = proc.desenhaForma(ImageIO.read(new File(funcoes.getFilePath1())),x1,x2,y1,y2, "poligono");
+						ImageIO.write(desenhoForma, "jpg", new File("images/_quadrado.jpg"));
+						Image Image3 = new Image(null, "images/_quadrado.jpg");
+						funcoes.setImage1(Image3);
+						funcoes.abreImagemDesenho(1, lblImagem1);
+					} catch (IOException e2) {
+						System.out.println("Erro desenhar forma");
+						e2.printStackTrace();
+					}
+				}
+			}
+		});
 		
 		scrolledComposite_1 = new ScrolledComposite(composite, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		scrolledComposite_1.setBounds(303, 191, 287, 241);
 		
+		
 		lblImagem2 = new CLabel(scrolledComposite_1, SWT.NONE);
 		scrolledComposite_1.setContent(lblImagem2);
 		scrolledComposite_1.setMinSize(lblImagem2.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		lblImagem2.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent arg0) {
-				String texto = lblPos.getText()+","+lblR.getText().substring(3)+","+lblG.getText().substring(3)+","+lblB.getText().substring(3);
-				listaCordenadas.add(texto);
-				System.out.println("add -> "+texto);
-			}
-		});
 		scrolledComposite.setMinSize(lblImagem1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		lblImagem2.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent arg0) {
 				funcoes.capturaPixel(2,arg0.x, arg0.y, lblPos, lblCor, lblR, lblG, lblB);
+			}
+		});
+		lblImagem2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				x1=e.x; y1=e.y;
+			}
+			@Override
+			public void mouseUp(MouseEvent e) {
+				// USO NO INFORMATIVO DE RGB (ADICIONANDO AO ARRAY)
+				String texto = lblPos.getText()+","+lblR.getText().substring(3)+","+lblG.getText().substring(3)+","+lblB.getText().substring(3);
+				listaCordenadas.add(texto);
+				System.out.println("add -> "+texto);
+				// ------------------------------------------------
+				x2=e.x; y2=e.y;
+				if (funcoes.getFilePath2() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath2());
+						BufferedImage desenhoForma = proc.desenhaForma(ImageIO.read(new File(funcoes.getFilePath2())),x1,x2,y1,y2, "quadrado");
+						ImageIO.write(desenhoForma, "jpg", new File("images/_quadrado.jpg"));
+						Image Image3 = new Image(null, "images/_quadrado.jpg");
+						funcoes.setImage2(Image3);
+						funcoes.abreImagemDesenho(2, lblImagem2);
+					} catch (IOException e2) {
+						System.out.println("Erro desenhar forma");
+						e2.printStackTrace();
+					}
+				}
 			}
 		});
 		

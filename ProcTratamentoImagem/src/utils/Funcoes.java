@@ -25,6 +25,18 @@ public class Funcoes {
 		idImagem = 0;
 	}
 
+	public void abreImagemDesenho(int indice, CLabel label) {
+		if (idImagem == 1) {
+			label.setBackground(image1);
+			label.setBounds(label.getBounds().x, label.getBounds().y, image1.getImageData().width,
+				image1.getImageData().height);
+		} else if (idImagem == 2) {
+			label.setBackground(image2);
+			label.setBounds(label.getBounds().x, label.getBounds().y, image2.getImageData().width,
+				image2.getImageData().height);
+		}
+	}
+	
 	public void abreImagem(int indice, CLabel label) {
 		idImagem = indice;
 		if (idImagem == 1) {

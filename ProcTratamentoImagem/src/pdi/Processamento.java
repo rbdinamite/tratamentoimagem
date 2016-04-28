@@ -1,5 +1,9 @@
 package pdi;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.FileOutputStream;
@@ -483,6 +487,55 @@ public class Processamento {
 							c2 = (int) (255*((double) taxa/100));
 							pixels[2] = c1+c2;
 							raster.setPixel(i,j,pixels);
+						}
+					}
+					try {
+						newImg.setData(raster);
+					} catch (Exception e) {
+						System.out.println("Erro ao inserir escala de cinza na imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
+				
+				// FUNÇÕES PARA O DESENHO DE FORMAS NA IMAGEM (QUADRADO)
+				public BufferedImage desenhaForma(BufferedImage image, int x1, int x2, int y1, int y2, String tipo) {
+					Graphics g = image.getGraphics();
+					Graphics2D g2d = (Graphics2D) g.create();
+					g2d.setStroke(new BasicStroke(4)); // 4 pixels de linha
+					g2d.setColor(Color.BLACK);
+					switch (tipo) {
+					case "quadrado":
+						g2d.drawRect(x1, y1, (Math.max(x1,x2)-Math.min(x1,x2)), (Math.max(y1,y2)-Math.min(y1,y2)));
+						break;
+					case "poligono":
+						g2d.drawPolygon(new int[]{x1,x1,x2,x2},new int[]{y1,y2,y2,y1},4);
+					default:
+						break;
+					}
+					
+					return image;
+				}
+				
+				// FUNÇÕES PARA CÁLCULO DE ESCALA DE CINZA
+				public BufferedImage filtroEscalaCinzaComDesenho(BufferedImage image, int x1, int x2, int y1, int y2) {
+					WritableRaster raster = image.getRaster();
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+					int pixels[] = new int[4];
+					int xMaior = Math.max(x1, x2);
+					int xMenor = Math.min(x1, x2);
+					int yMaior = Math.max(y1, y2);
+					int yMenor = Math.min(y1, y2);
+					for (int i = 1; i < image.getWidth()-1; i++) {
+						for (int j = 1; j <image.getHeight()-1; j++) {
+							if (i >= xMenor && i <= xMaior && j >= yMenor && j <= yMaior) {
+								raster.getPixel(i,j,pixels);
+								int escalaCinza = calculaEscalaCinza(1, pixels, 0,0,0);
+								pixels[0] = escalaCinza;
+								pixels[1] = escalaCinza;
+								pixels[2] = escalaCinza;
+								raster.setPixel(i,j,pixels);
+							}
 						}
 					}
 					try {
