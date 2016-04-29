@@ -546,4 +546,25 @@ public class Processamento {
 					}
 					return newImg;
 				}
+				
+				// FUNÇÕES PARA O INVERSAO DA IMAGEM
+				public BufferedImage filtroInversao(BufferedImage image) {
+					WritableRaster raster = image.getRaster();
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+					WritableRaster raster2 = newImg.getRaster();
+					int pixels[] = new int[4];
+					for (int i = 1; i < image.getWidth()-1; i++) {
+						for (int j = 1; j <image.getHeight()-1; j++) {
+							raster.getPixel(image.getWidth()-(i+1),image.getHeight()-(1+j),pixels);
+							raster2.setPixel(i, j, pixels);
+						}
+					}
+					try {
+						newImg.setData(raster2);
+					} catch (Exception e) {
+						System.out.println("Erro ao inverter imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
 }

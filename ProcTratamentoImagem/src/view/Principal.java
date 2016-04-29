@@ -86,6 +86,10 @@ public class Principal extends Shell {
 	int x1=0,x2=0,y1=0,y2=0; // INDICES UTILIZADOS NO DESENHO DE FORMAS
 	private Button btnSimplesImagem1Desenho;
 	private Button btnSimplesImagem2_Desenho;
+	private CTabItem tbtmInverso;
+	private Composite composite_8;
+	private Button btnInversao1;
+	private Button btnInversao2;
 	
 
 	/**
@@ -792,6 +796,39 @@ public class Principal extends Shell {
 		label_9 = new Label(composite_7, SWT.NONE);
 		label_9.setText("100");
 		label_9.setBounds(435, 89, 18, 15);
+		
+		tbtmInverso = new CTabItem(tabFolder, SWT.NONE);
+		tbtmInverso.setText("Invers\u00E3o");
+		
+		composite_8 = new Composite(tabFolder, SWT.NONE);
+		tbtmInverso.setControl(composite_8);
+		
+		btnInversao1 = new Button(composite_8, SWT.NONE);
+		btnInversao1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage inversao = proc.filtroInversao(ImageIO.read(new File(funcoes.getFilePath1())));
+						ImageIO.write(inversao, "jpg", new File("images/_inversao.jpg"));
+						Image Image3 = new Image(null, "images/_inversao.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de inversão da imagem");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnInversao1.setText("Invers\u00E3o - Imagem 1");
+		btnInversao1.setBounds(10, 10, 168, 32);
+		
+		btnInversao2 = new Button(composite_8, SWT.NONE);
+		btnInversao2.setText("Invers\u00E3o - Imagem 2");
+		btnInversao2.setBounds(10, 60, 168, 32);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {
