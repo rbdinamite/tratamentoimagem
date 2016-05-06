@@ -567,4 +567,111 @@ public class Processamento {
 					}
 					return newImg;
 				}
+				
+				
+				// #######################################################################
+				// FUNÇÕES UTILIZADAS NA PROVA 05/05/2016
+				// #######################################################################
+				
+				// FUNÇÕES PARA IMAGEM ZEBRADA
+				public BufferedImage filtroZebrada(BufferedImage image, int nCol) {
+					WritableRaster raster = image.getRaster();
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+					int widhtMedio = (int) image.getWidth()/nCol;
+					System.out.println("Media pixels -> "+widhtMedio);
+					int contador = 0;
+					boolean modifica = true;
+					int pixels[] = new int[4];
+					for (int i = 1; i < image.getHeight()-1; i++) {
+						contador = 0;
+						modifica = true;
+						for (int j = 1; j <image.getWidth()-1; j++) {
+							raster.getPixel(j,i,pixels);
+							//System.out.println("MODIFICA É -> ("+modifica+")");
+							if (modifica) {
+								System.out.println(contador+" - Aplicando modificador ("+i+","+j+")");
+								int escalaCinza = calculaEscalaCinza(1, pixels, 0,0,0);
+								pixels[0] = escalaCinza;
+								pixels[1] = escalaCinza;
+								pixels[2] = escalaCinza;
+								
+							} 							
+							contador++;
+							if (contador == widhtMedio) {
+								//System.err.println(contador+" - TROCANDO SINAL ... ("+i+","+j+")");
+								modifica = (modifica) ? false : true; 
+								contador = 0;
+							}
+							raster.setPixel(j, i, pixels);
+						}
+					}
+					try {
+						newImg.setData(raster);
+					} catch (Exception e) {
+						System.out.println("Erro ao modificar imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
+				
+				// FUNÇÕES PARA O INVERSAO DA IMAGEM COM FORMA
+				public BufferedImage filtroInversaoComDesenho(BufferedImage image, int x1, int x2, int y1, int y2) {
+					int xMaior = Math.max(x1, x2);
+					int xMenor = Math.min(x1, x2);
+					int yMaior = Math.max(y1, y2);
+					int yMenor = Math.min(y1, y2);
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+					WritableRaster raster = image.getRaster();
+					WritableRaster raster2 = newImg.getRaster();
+					int pixels[] = new int[4];
+					for (int i = 1; i < image.getWidth()-1; i++) {
+						for (int j = 1; j <image.getHeight()-1; j++) {
+							if (i >= xMenor && i <= xMaior && j >= yMenor && j <= yMaior) {
+								raster.getPixel(xMaior-(Math.max(xMenor,i)-Math.min(xMenor,i)),yMaior-(Math.max(yMenor,j)-Math.min(yMenor,j)),pixels);
+							} else {
+								raster.getPixel(i,j,pixels);
+							}
+							raster2.setPixel(i, j, pixels);
+						}
+					}
+					try {
+						newImg.setData(raster2);
+					} catch (Exception e) {
+						System.out.println("Erro ao inverter imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
+				
+				// VERIFICA SE UM QUADRADO ESTÁ PREENCHIDO
+				public String analiseQuadrado(BufferedImage image) {
+					WritableRaster raster = image.getRaster();
+					int pixels[] = new int[4];
+					int xInicio = 0,yInicio = 0;
+					int xFim = 0,yFim = 0;
+					boolean achouInicio = false;
+					for (int i = 1; i < image.getHeight()-1; i++) {
+						for (int j = 1; j <image.getWidth()-1; j++) {
+							raster.getPixel(j,i,pixels);
+								if (pixels[0] == 0) {
+									if (!achouInicio) {
+										achouInicio = true;
+										xInicio = i;
+										yInicio = j;
+										xFim = i;
+										yFim = j;
+									} else {
+										xFim = Math.max(xFim,i);
+										yFim = Math.max(yFim,j);
+									}
+								}
+						}
+					}
+					raster.getPixel((int) ((xFim-xInicio)/2), (int) ((yFim-yInicio)/2), pixels);
+					if (pixels[0] == 0) {
+						return "QUADRADO PREENCHIDO";
+					} else {
+						return "QUADRADO VAZIO";
+					}
+				}
 }

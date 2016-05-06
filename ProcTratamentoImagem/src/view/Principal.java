@@ -90,6 +90,14 @@ public class Principal extends Shell {
 	private Composite composite_8;
 	private Button btnInversao1;
 	private Button btnInversao2;
+	private Spinner nColunas;
+	private Button btnInversaoDesenho1;
+	private Button btnInversaoDesenho2;
+	private CTabItem tbtmAnliseDeQuadrado;
+	private Composite composite_10;
+	private Button btnAnalisarImagem1;
+	private Button btnAnalisarImagem2;
+	private Label lblRespostaAnalise;
 	
 
 	/**
@@ -829,6 +837,110 @@ public class Principal extends Shell {
 		btnInversao2 = new Button(composite_8, SWT.NONE);
 		btnInversao2.setText("Invers\u00E3o - Imagem 2");
 		btnInversao2.setBounds(10, 60, 168, 32);
+		
+		btnInversaoDesenho1 = new Button(composite_8, SWT.NONE);
+		btnInversaoDesenho1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null && x1 > 0 && y1 > 0 && x2 > 0 && y2 > 0) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage inversao = proc.filtroInversaoComDesenho(ImageIO.read(new File(funcoes.getFilePath1())),x1,x2,y1,y2);
+						ImageIO.write(inversao, "jpg", new File("images/_inversaoComDesenho1.jpg"));
+						Image Image3 = new Image(null, "images/_inversaoComDesenho1.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de inversão com desenho");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnInversaoDesenho1.setText("Imagem 1 (Com desenho)");
+		btnInversaoDesenho1.setBounds(204, 10, 202, 32);
+		
+		btnInversaoDesenho2 = new Button(composite_8, SWT.NONE);
+		btnInversaoDesenho2.setText("Imagem 2 (Com desenho)");
+		btnInversaoDesenho2.setBounds(204, 60, 202, 32);
+		
+		CTabItem tbtmZebrado = new CTabItem(tabFolder, SWT.NONE);
+		tbtmZebrado.setText("Zebrado");
+		
+		Composite composite_9 = new Composite(tabFolder, SWT.NONE);
+		tbtmZebrado.setControl(composite_9);
+		
+		Button btnZebradoImagem1 = new Button(composite_9, SWT.NONE);
+		btnZebradoImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage zebrada = proc.filtroZebrada(ImageIO.read(new File(funcoes.getFilePath1())),nColunas.getSelection());
+						ImageIO.write(zebrada, "jpg", new File("images/_zebrada1.jpg"));
+						Image Image3 = new Image(null, "images/_zebrada1.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de zebrar imagem");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnZebradoImagem1.setText("Zebrado - Imagem 1");
+		btnZebradoImagem1.setBounds(10, 10, 168, 32);
+		
+		Button btnZebradoImagem2 = new Button(composite_9, SWT.NONE);
+		btnZebradoImagem2.setText("Zebrado - Imagem 2");
+		btnZebradoImagem2.setBounds(10, 64, 168, 32);
+		
+		nColunas = new Spinner(composite_9, SWT.BORDER);
+		nColunas.setPageIncrement(1);
+		nColunas.setMaximum(50);
+		nColunas.setSelection(5);
+		nColunas.setBounds(265, 39, 47, 22);
+		
+		Label lblNDeColunas = new Label(composite_9, SWT.NONE);
+		lblNDeColunas.setText("N\u00BA de colunas");
+		lblNDeColunas.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblNDeColunas.setBounds(241, 10, 97, 27);
+		
+		tbtmAnliseDeQuadrado = new CTabItem(tabFolder, SWT.NONE);
+		tbtmAnliseDeQuadrado.setText("An\u00E1lise de Quadrado");
+		
+		composite_10 = new Composite(tabFolder, SWT.NONE);
+		tbtmAnliseDeQuadrado.setControl(composite_10);
+		
+		btnAnalisarImagem1 = new Button(composite_10, SWT.NONE);
+		btnAnalisarImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						lblRespostaAnalise.setText(proc.analiseQuadrado(ImageIO.read(new File(funcoes.getFilePath1()))));
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de zebrar imagem");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnAnalisarImagem1.setText("Analisar - Imagem 1");
+		btnAnalisarImagem1.setBounds(10, 10, 168, 32);
+		
+		btnAnalisarImagem2 = new Button(composite_10, SWT.NONE);
+		btnAnalisarImagem2.setText("Analisar - Imagem 2");
+		btnAnalisarImagem2.setBounds(10, 64, 168, 32);
+		
+		lblRespostaAnalise = new Label(composite_10, SWT.NONE);
+		lblRespostaAnalise.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.BOLD));
+		lblRespostaAnalise.setBounds(283, 64, 255, 32);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {
