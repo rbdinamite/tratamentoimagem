@@ -98,6 +98,7 @@ public class Principal extends Shell {
 	private Button btnAnalisarImagem1;
 	private Button btnAnalisarImagem2;
 	private Label lblRespostaAnalise;
+	private Spinner spNGruposSegmentacao;
 	
 
 	/**
@@ -941,6 +942,51 @@ public class Principal extends Shell {
 		lblRespostaAnalise = new Label(composite_10, SWT.NONE);
 		lblRespostaAnalise.setFont(SWTResourceManager.getFont("Segoe UI", 14, SWT.BOLD));
 		lblRespostaAnalise.setBounds(283, 64, 255, 32);
+		
+		CTabItem tbtmSegmentao = new CTabItem(tabFolder, SWT.NONE);
+		tbtmSegmentao.setText("Segmenta\u00E7\u00E3o");
+		
+		Composite composite_11 = new Composite(tabFolder, SWT.NONE);
+		tbtmSegmentao.setControl(composite_11);
+		
+		Button btnSegmentarImagem1 = new Button(composite_11, SWT.NONE);
+		btnSegmentarImagem1.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (funcoes.getFilePath1() != null) {
+					Processamento proc = new Processamento();
+					try {
+						System.out.println("Arquivo -> "+funcoes.getFilePath1());
+						BufferedImage segmentacao = proc.segmentacaoGrupos(ImageIO.read(new File(funcoes.getFilePath1())),spNGruposSegmentacao.getSelection());
+						ImageIO.write(segmentacao, "jpg", new File("images/_segmentacao1.jpg"));
+						Image Image3 = new Image(null, "images/_segmentacao1.jpg");
+						funcoes.setImage3(Image3);
+						funcoes.abreImagem(3, lblImagem3);
+					} catch (IOException e) {
+						System.out.println("Erro iniciar função de segmentacao em grupos");
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		btnSegmentarImagem1.setText("Segmentar - Imagem 1");
+		btnSegmentarImagem1.setBounds(30, 10, 168, 32);
+		
+		Button btnSegmentarImagem2 = new Button(composite_11, SWT.NONE);
+		btnSegmentarImagem2.setText("Segmentar - Imagem 2");
+		btnSegmentarImagem2.setBounds(30, 54, 168, 32);
+		
+		spNGruposSegmentacao = new Spinner(composite_11, SWT.BORDER);
+		spNGruposSegmentacao.setPageIncrement(1);
+		spNGruposSegmentacao.setMaximum(5);
+		spNGruposSegmentacao.setMinimum(1);
+		spNGruposSegmentacao.setSelection(3);
+		spNGruposSegmentacao.setBounds(259, 44, 47, 22);
+		
+		Label lblNDeGrupos = new Label(composite_11, SWT.NONE);
+		lblNDeGrupos.setText("N\u00BA de grupos");
+		lblNDeGrupos.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+		lblNDeGrupos.setBounds(232, 15, 97, 27);
 		
 		btnImagem1 = new Button(composite, SWT.NONE);
 		btnImagem1.addSelectionListener(new SelectionAdapter() {

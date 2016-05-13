@@ -674,4 +674,62 @@ public class Processamento {
 						return "QUADRADO VAZIO";
 					}
 				}
+				
+				// REALIZA A SEGMENTAÇÃO POR GRUPOS
+				public BufferedImage segmentacaoGrupos(BufferedImage image, int nGrupos) {
+					int[][] matrizCores = new int[5][5];
+					matrizCores[0][0] = 255;
+					matrizCores[0][1] = 0;
+					matrizCores[0][2] = 0;
+					matrizCores[1][0] = 255;
+					matrizCores[1][1] = 255;
+					matrizCores[1][2] = 0;
+					matrizCores[2][0] = 0;
+					matrizCores[2][1] = 0;
+					matrizCores[2][2] = 0;
+					matrizCores[3][0] = 255;
+					matrizCores[3][1] = 0;
+					matrizCores[3][2] = 255;
+					WritableRaster raster = image.getRaster();
+					BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+					WritableRaster raster2 = newImg.getRaster();
+					int pixels[] = new int[4];
+					int menor = 255, maior = 0;
+					for (int i = 1; i < image.getWidth()-1; i++) {
+						for (int j = 1; j <image.getHeight()-1; j++) {
+							raster.getPixel(i,j,pixels);
+							int media = calculaEscalaCinza(1, pixels, 0,0,0);
+							if (media < menor) { 
+								menor = media; 
+							} else if (media > maior) {
+								maior = media;
+							}
+						}
+					}
+					int mediaGrupo = Math.round((maior-menor) / nGrupos)+1;
+					System.out.println("MAIOR -> "+maior+" - MENOR -> "+menor+" - MEDIA -> "+mediaGrupo);
+					for (int j = 1; j <image.getHeight()-1; j++) {
+						for (int i = 1; i < image.getWidth()-1; i++) {
+							raster.getPixel(i,j,pixels);
+							int mediaPixel = calculaEscalaCinza(1, pixels, 0,0,0);
+							int grupo = Math.floorDiv(mediaPixel,mediaGrupo);
+							if (grupo < 3) {
+								//System.out.println("TROCANDO GRUPO ["+grupo+"] ["+pixels[0]+","+pixels[1]+","+pixels[2]+"] PARA ESCALA -> ["+matrizCores[grupo][0]+","+matrizCores[grupo][1]+","+matrizCores[grupo][2]+"]");
+								pixels[0] = matrizCores[grupo][0];
+								pixels[1] = matrizCores[grupo][1];
+								pixels[2] = matrizCores[grupo][2];
+							} else {
+								//System.err.println("ERRO: grupo inválido -> ("+grupo+") - MEDIA -> ("+mediaGrupo+") - PIXELS -> ["+pixels[0]+","+pixels[1]+","+pixels[2]+"] ESCALA -> ("+mediaPixel+")");
+							}
+							raster2.setPixel(i,j,pixels);
+						}
+					}
+					try {
+						newImg.setData(raster2);
+					} catch (Exception e) {
+						System.out.println("Erro ao inverter imagem");
+						e.printStackTrace();
+					}
+					return newImg;
+				}
 }
