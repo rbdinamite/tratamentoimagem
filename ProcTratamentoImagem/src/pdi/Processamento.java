@@ -18,6 +18,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 import utils.Pixel;
 
+/**
+ * FUNÇÕES PARA TRATAMENTO DIGITAL DE IMAGEM SEM FRAMEWORK
+ * @author ROBERTO ABREU BENTO
+ * @version 1.0.17
+ */
 public class Processamento {
 
 	// FUNÇÕES PARA CÁLCULO DE MÉDIA E MEDIANA
@@ -215,7 +220,12 @@ public class Processamento {
 		return resultado;
 	}
 	
-	// FUNÇÕES PARA O CÁLCULO DA LIMIARIZAÇÃO
+	/**
+	 * FUNÇÃO PARA O CÁLCULO DA LIMIARIZAÇÃO
+	 * @param image - ARQUIVO DA IMAGEM
+	 * @param limiar - VALOR DO LIMIAR A SER UTILIZADO NO CORTE
+	 * @return BufferedImage
+	 */
 	public BufferedImage filtroLimiarizacao(BufferedImage image, int limiar) {
 		WritableRaster raster = image.getRaster();
 		BufferedImage newImg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
